@@ -5,18 +5,28 @@
 
 outfox.config.category_biomes=Ports o' call
 outfox.config.category_biomes.tooltip=Whar shall the li'l mutts moor their vessels?
+outfox.config.category_compat=Fellow crews
+outfox.config.category_compat.tooltip=Which other foul pirate gangs ought we work together with?
 outfox.config.category_general=Odds an' ends
 outfox.config.category_general.tooltip=Switches an' knobs what don't fit in the other chests.
 outfox.config.category_search=Treasure mappin'
 outfox.config.category_search.tooltip=Teach the furballs ta hunt loot like a true sea rogue!
+outfox.config.category_stealing=Pocket pickenin'
+outfox.config.category_stealing.tooltip=What manner o' pilferin' ought yer pets get up ta?
 outfox.config.common_biomes=Ports o' dennin'
 outfox.config.common_biomes.tooltip=These waters be lousy wit 'em!
 outfox.config.common_types=Colors o' dennin'
 outfox.config.common_types.tooltip=They be sailin' under these commonwealth's marques.
+outfox.config.compat_theoneprobe=The Sole Inquest fellowship
+outfox.config.compat_theoneprobe.tooltip=Shall we call upon the crew of The Sole Inquest ta keep an eye on the fuzzballs?
+outfox.config.compat_waila=Beheld Thusly fellowship
+outfox.config.compat_waila.tooltip=Shall we petition the crew of the Beheld Thusly ta show ye how yer pets are feelin'?
 outfox.config.immune_tools='Armless diggin' tools
 outfox.config.immune_tools.tooltip=Ye'll be mindful 'round yer pets when swingin' these.
 outfox.config.logging_enabled=Whispers o' mutiny
 outfox.config.logging_enabled.tooltip=Shall we let ye know o' complaints from yer crew in the nightly report?
+outfox.config.obstruction_depth=Blockade scoutin'
+outfox.config.obstruction_depth.tooltip=How far ought they keep a weather eye out fer treacherous shoals?
 outfox.config.particles_enabled=Sniffin' smoke
 outfox.config.particles_enabled.tooltip=Shall yer fuzzy mateys make lights at ye, ta tell ye when treasure's afoot?
 outfox.config.rare_biomes=Ports o' prowlin'
@@ -37,6 +47,8 @@ outfox.config.search_range=Surveyin' distance
 outfox.config.search_range.tooltip=How many leagues shall they chart the seas fer?
 outfox.config.search_waypoints=Number o' buoys
 outfox.config.search_waypoints.tooltip=How many paces ta the East did that map say again?\nYe must drop yer anchor ta change this!
+outfox.config.sit_override=Level o' restraint
+outfox.config.sit_override.tooltip=Shall a mutt made ta stand down ne'er cross yer word?
 outfox.config.state_matches=Types o' treasure
 outfox.config.state_matches.tooltip=What marks o' mintin' must the mangy mutts watch fer when checkin' found coins?
 

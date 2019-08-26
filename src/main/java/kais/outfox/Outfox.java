@@ -10,14 +10,17 @@
 
 package kais.outfox;
 
+import kais.outfox.compat.CompatHandler;
 import kais.outfox.fox.EntityFox;
 import kais.outfox.proxy.ServerProxy;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -29,7 +32,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
     modid = OutfoxResources.MODID,
     name = OutfoxResources.NAME,
     version = OutfoxResources.VERSION,
-    dependencies = "required:forge@[14.23.3.2678,);",
+    dependencies = "required-after:forge@[14.23.3.2678,);"
+        + "after:theoneprobe@[1.4.28,)",
     acceptedMinecraftVersions = "[1.12.2,]"
 )
 
@@ -51,14 +55,14 @@ public class Outfox {
     public static void RegisterEntities(RegistryEvent.Register<EntityEntry> event) {
 
         event.getRegistry().register(EntityEntryBuilder.create()
-                .entity(EntityFox.class)
-                .id(new ResourceLocation(OutfoxResources.MODID, "fox"), 0)
-                .name(OutfoxResources.MODID + ".fox")
-                .spawn(EnumCreatureType.CREATURE, 11, 2, 5, OutfoxResources.mergeBiomes(OutfoxConfig.biomes.common_biomes, OutfoxConfig.biomes.common_types))
-                .spawn(EnumCreatureType.CREATURE, 4, 2, 3, OutfoxResources.mergeBiomes(OutfoxConfig.biomes.rare_biomes, OutfoxConfig.biomes.rare_types))
-                .egg(0xFF9F2B, 0x404040)
-                .tracker(64, 4, false)
-                .build());
+            .entity(EntityFox.class)
+            .id(new ResourceLocation(OutfoxResources.MODID, "fox"), 0)
+            .name(OutfoxResources.MODID + ".fox")
+            .spawn(EnumCreatureType.CREATURE, 11, 2, 5, OutfoxResources.mergeBiomes(OutfoxConfig.biomes.common_biomes, OutfoxConfig.biomes.common_types))
+            .spawn(EnumCreatureType.CREATURE, 4, 2, 3, OutfoxResources.mergeBiomes(OutfoxConfig.biomes.rare_biomes, OutfoxConfig.biomes.rare_types))
+            .egg(0xFF9F2B, 0x404040)
+            .tracker(64, 4, false)
+            .build());
     }
 
     @SubscribeEvent
@@ -67,8 +71,11 @@ public class Outfox {
         for (SoundEvent sound : OutfoxResources.FOX_SND_SET) { event.getRegistry().register(sound); }
     }
 
+    @SuppressWarnings("unused")
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {
+
+        if (ForgeVersion.buildVersion < 2678) { OutfoxResources.logError("Unsupported Forge version! (expected > 14.23.3.2678) This is highly likely to break things, the dev will not fix any problems caused by this"); } // "shouldn't" is a really interesting concept, isn't it?
 
         OutfoxConfig.sync();
         proxy.registerRender();
@@ -78,5 +85,10 @@ public class Outfox {
 
             OutfoxResources.logWarn("Fox has no configured spawn biomes, I hope you know what you're doing");
         }
+    }
+
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent e) {
+        CompatHandler.register();
     }
 }

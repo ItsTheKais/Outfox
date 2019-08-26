@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
  * style note: the individual lines of multiline comments should be no longer than 100 characters long;
- * including indentation & quotes, that's 115 characters total, 116 with the comma;
+ * including indentation & quotes, that's 115 characters total, 116 with a comma;
  * this makes the config file look a bit nicer because the comments won't be longer than the category headers;
  * never let anyone tell you the little things don't count!
  */
@@ -30,6 +30,10 @@ public class OutfoxConfig {
     @Config.LangKey("outfox.config.category_biomes")
     public static final Biomes biomes = new Biomes();
 
+    @Config.Comment("Cross-mod compatibility settings")
+    @Config.LangKey("outfox.config.category_compat")
+    public static final Compat compat = new Compat();
+
     @Config.Comment("Miscellaneous config settings")
     @Config.LangKey("outfox.config.category_general")
     public static final General general = new General();
@@ -37,6 +41,10 @@ public class OutfoxConfig {
     @Config.Comment("Block searching AI configuration")
     @Config.LangKey("outfox.config.category_search")
     public static final Search search = new Search();
+
+    //@Config.Comment("Item stealing AI configuration")
+    //@Config.LangKey("outfox.config.category_stealing")
+    //public static final Stealing stealing = new Stealing();
 
     public static class Biomes {
 
@@ -90,11 +98,29 @@ public class OutfoxConfig {
         public String[] rare_types = {};
     }
 
-    public static class General {
+    public static class Compat {
 
-        @Config.Comment({"Send warning messages to the logfile?"})
-        @Config.LangKey("outfox.config.logging_enabled")
-        public boolean logging_enabled = true;
+        @Config.Comment({
+            "Is The One Probe compatibility enabled?",
+            "If The One Probe is present, this adds the currently-searched-for block to the standard tooltip, and",
+            "the XYZ coordinates of the located block to the Creative Probe tooltip.",
+            "This setting requires a Minecraft restart if changed from the in-game config menu!"
+        })
+        @Config.LangKey("outfox.config.compat_theoneprobe")
+        @Config.RequiresMcRestart
+        public boolean compat_theoneprobe = true;
+
+        @Config.Comment({
+            "Is WAILA/HWYLA compatibility enabled?",
+            "If WAILA or HWYLA are present, this adds the currently-searched-for block to the tooltip.",
+            "This setting requires a Minecraft restart if changed from the in-game config menu!"
+        })
+        @Config.LangKey("outfox.config.compat_waila")
+        @Config.RequiresMcRestart
+        public boolean compat_waila = true;
+    }
+
+    public static class General {
 
         @Config.Comment({
             "Averts workplace accidents in tight spaces.",
@@ -114,9 +140,33 @@ public class OutfoxConfig {
         })
         @Config.LangKey("outfox.config.immune_tools")
         public String[] immune_tools = OutfoxResources.DEFAULT_IMMUNE_TOOLS;
+
+        @Config.Comment("Send warning messages to the logfile?")
+        @Config.LangKey("outfox.config.logging_enabled")
+        public boolean logging_enabled = true;
+
+        @Config.Comment({
+            "The chance for each raw rabbit fed to a wild fox to tame it. Odds are one in this number.",
+            "Default: 4"
+        })
+        @Config.LangKey("outfox.config.tame_chance")
+        @Config.RangeInt(min=1)
+        public int tame_chance = 4;
     }
 
     public static class Search {
+
+        @Config.Comment({
+            "The block distance the search AI will recursively check for unbreakable obstructions (e.g. bedrock)",
+            "before giving up and assuming that a block can be reached,",
+            "Increasing this value will make foxes less likely to lead you to inaccessible blocks, but may also",
+            "heavily impact game performance. The default value should be fine if the only potential problem is",
+            "vanilla bedrock gen. Set to 0 to disable this check entirely.",
+            "Default: 5"
+        })
+        @Config.LangKey("outfox.config.obstruction_depth")
+        @Config.RangeInt(min = 0)
+        public int obstruction_depth = 5;
 
         @Config.Comment("Is block searching enabled?")
         @Config.LangKey("outfox.config.search_enabled")
@@ -206,6 +256,29 @@ public class OutfoxConfig {
         })
         @Config.LangKey("outfox.config.state_matches")
         public String[] state_matches = OutfoxResources.DEFAULT_STATE_MATCHES;
+    }
+
+    public static class Stealing {
+
+        @Config.Comment({
+            "Override the sit AI's attack target reaction. False is vanilla behavior (what wolves do).",
+            "If true, foxes that have been told to sit will not get up when you are attacked.",
+            "This setting applies whether stealing is enabled or not."
+        })
+        @Config.LangKey("outfox.config.sit_override")
+        public boolean sit_override = true;
+
+        @Config.Comment("Should foxes be able to steal armor as well as held items?s")
+        @Config.LangKey("outfox.config.stealing_armor")
+        public boolean stealing_armor = false;
+
+        @Config.Comment("Is item stealing enabled?")
+        @Config.LangKey("outfox.config.stealing_enabled")
+        public boolean stealing_enabled = true;
+
+        @Config.Comment("Should foxes be able to steal from players?")
+        @Config.LangKey("outfox.config.stealing_players")
+        public boolean stealing_players = false;
     }
 
     @SubscribeEvent

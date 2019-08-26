@@ -19,6 +19,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import net.minecraft.block.state.BlockStateBase;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
@@ -31,13 +32,13 @@ import org.apache.logging.log4j.Logger;
 public class OutfoxResources {
 
     //TODO: these three constants must be commented out, and the three constants below them uncommented, before building!
-    public static final String MODID = "outfox";
-    public static final String NAME = "Outfox";
-    public static final String VERSION = "$DEV$";
+    //public static final String MODID = "outfox";
+    //public static final String NAME = "Outfox";
+    //public static final String VERSION = "$DEV$";
 
-    //public static final String MODID = "gradle%modid";
-    //public static final String NAME = "gradle%name";
-    //public static final String VERSION = "gradle%version";
+    public static final String MODID = "gradle%modid";
+    public static final String NAME = "gradle%name";
+    public static final String VERSION = "gradle%version";
 
     private static final Logger LOGGER = LogManager.getLogger(MODID);
 
@@ -148,9 +149,13 @@ public class OutfoxResources {
     /**
      * converts the output of BlockStateBase.toString() into a HashMap of String pairs because I'm too stupid to figure out IProperty
      */
-    public static HashMap<String, String> stateStringToHashMap(IBlockState state) {
+    public static HashMap<String, String> blockStateToHashMap(IBlockState state) {
 
-        String statestring = ((BlockStateBase)state).toString();
+        return stateStringToHashMap(((BlockStateBase)state).toString(), state.getBlock().getRegistryName().toString());
+    }
+
+    public static HashMap<String, String> stateStringToHashMap(String statestring, @Nullable String block) {
+
         HashMap<String, String> map = new HashMap<String, String>(OutfoxConfig.search.state_matches.length);
         if (!statestring.contains("[")) { return map; }
 
@@ -171,7 +176,7 @@ public class OutfoxResources {
 
                 String g = matcher.group(1);
                 if (g != null && !g.equals("")) { map.put(s, g); }
-                else { logWarn("The blockstate '" + s + "' was found on block '" + state.getBlock().getRegistryName() + "' but had null or blank value, ignoring"); }
+                else { logWarn("The blockstate '" + s + "' was found on block '" + (block == null ? "(unknown)" : block) + "' but had null or blank value, ignoring"); }
             }
         }
 

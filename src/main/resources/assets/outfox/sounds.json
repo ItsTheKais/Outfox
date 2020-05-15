@@ -21,6 +21,13 @@
         "subtitle" : "outfox.subtitles.fox.sniff",
         "category" : "neutral"
     },
+    "fox.steal" : {
+        "sounds" : [
+            "outfox:steal"
+        ],
+        "subtitle" : "outfox.subtitles.fox.steal",
+        "category" : "neutral"
+    },
     "fox.hurt" : {
         "sounds" : [
             "outfox:hurt1",

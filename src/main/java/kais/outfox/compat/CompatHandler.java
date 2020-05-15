@@ -1,5 +1,5 @@
 /**
- * Copyright © 2018 Aiden Vaughn "ItsTheKais"
+ * Copyright © 2019 Aiden Vaughn "ItsTheKais"
  *
  * This file is part of Outfox.
  *
@@ -11,6 +11,7 @@
 package kais.outfox.compat;
 
 import kais.outfox.OutfoxConfig;
+import kais.outfox.OutfoxResources;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 
@@ -20,9 +21,11 @@ public class CompatHandler {
 
         if (OutfoxConfig.compat.compat_theoneprobe && Loader.isModLoaded("theoneprobe")) {
             FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", "kais.outfox.compat.CompatTOP");
+            OutfoxResources.logInfo("Enabled support for The One Probe");
         }
         if (OutfoxConfig.compat.compat_waila && Loader.isModLoaded("waila")) {
             FMLInterModComms.sendMessage("waila", "register", "kais.outfox.compat.CompatWaila.register");
+            OutfoxResources.logInfo("Enabled support for WAILA");
         }
     }
 }

@@ -20,7 +20,7 @@ public class OutfoxTextures {
     public static final ResourceLocation FOX_CROSS_TEX = new ResourceLocation(OutfoxResources.MODID, "textures/fox/fox_cross.png");
     public static final ResourceLocation FOX_MARBLE_TEX = new ResourceLocation(OutfoxResources.MODID, "textures/fox/fox_marble.png");
     public static final ResourceLocation FOX_PALE_TEX = new ResourceLocation(OutfoxResources.MODID, "textures/fox/fox_pale.png");
-    public static final ResourceLocation FOX_RAINBOW_TEX = new ResourceLocation(OutfoxResources.MODID, "textures/fox/fox_rainbow.png");
+    public static final ResourceLocation FOX_STRANGE_TEX = new ResourceLocation(OutfoxResources.MODID, "textures/fox/fox_strange.png");
     public static final ResourceLocation FOX_RED_TEX = new ResourceLocation(OutfoxResources.MODID, "textures/fox/fox_red.png");
     public static final ResourceLocation FOX_RIBBON_TEX = new ResourceLocation(OutfoxResources.MODID, "textures/fox/fox_ribbon.png");
     public static final ResourceLocation FOX_RUSTY_TEX = new ResourceLocation(OutfoxResources.MODID, "textures/fox/fox_rusty.png");

@@ -80,17 +80,17 @@ public class EntityFox extends EntityTameable {
      */
     private static final DataParameter<Integer> VARIANT = EntityDataManager.<Integer>createKey(EntityFox.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> RIBBON_COLOR = EntityDataManager.<Integer>createKey(EntityFox.class, DataSerializers.VARINT);
+    private static final DataParameter<ItemStack> STOLEN_ITEM = EntityDataManager.<ItemStack>createKey(EntityFox.class, DataSerializers.ITEM_STACK);
     private EntityAIAvoidEntity<EntityPlayer> aiAvoid;
     private EntityAISit aiSit;
     private EntityAISearchForBlock aiSearch;
     private EntityAITempt aiTempt;
     @Nullable
-    private ItemStack stolenItem; // currently carried item
-    @Nullable
     protected Block searchedBlock; // the current block id being searched for
     @Nullable
     protected HashMap<String, String> stateTags; // map of block state properties that the block search should match
     protected PathNavigateGround searchNavigator; // customized pathnavigator and pathfinder used for block searching
+    protected int stealCooldown;
     private boolean interacted;
     private boolean isWet;
     private boolean isShaking;
@@ -115,7 +115,7 @@ public class EntityFox extends EntityTameable {
         this.tasks.addTask(3, this.aiTempt);
         //                 4, this.aiAvoid
         this.tasks.addTask(5, new EntityAIMate(this, 0.75D));
-        //this.tasks.addTask(6, new EntityAIStealFromOwnersAttacker(this, 0.67D, 1.2D));
+        this.tasks.addTask(6, new EntityAIStealFromOwnersAttacker(this, 0.66D, 1.15D));
         this.tasks.addTask(7, this.aiSearch);
         this.tasks.addTask(8, new EntityAIFollowOwner(this, 1.0D, 10.0F, 2.0F));
         this.tasks.addTask(9, new EntityAIWanderAvoidWater(this, 1.0D));
@@ -127,6 +127,7 @@ public class EntityFox extends EntityTameable {
         super.entityInit();
         this.dataManager.register(VARIANT, 0);
         this.dataManager.register(RIBBON_COLOR, EnumDyeColor.BLUE.getDyeDamage());
+        this.dataManager.register(STOLEN_ITEM, ItemStack.EMPTY);
     }
 
     @Nullable
@@ -161,6 +162,11 @@ public class EntityFox extends EntityTameable {
                 compound.setString("SearchedBlockTags", tagstring);
             }
         }
+
+        if (!this.dataManager.get(STOLEN_ITEM).isEmpty()) {
+
+            compound.setTag("StolenItem", this.dataManager.get(STOLEN_ITEM).writeToNBT(new NBTTagCompound()));
+        }
     }
 
     public void readEntityFromNBT(NBTTagCompound compound) {
@@ -169,21 +175,27 @@ public class EntityFox extends EntityTameable {
 
         if (compound.hasKey("Variant", 99)) { this.setVariant(compound.getInteger("Variant")); }
         else {
+
             OutfoxResources.logWarn("A fox didn't have a saved variant for some reason, defaulting to 0");
             this.setVariant(0);
         }
 
         if (compound.hasKey("RibbonColor", 99)) { this.setRibbonColor(EnumDyeColor.byDyeDamage(compound.getByte("RibbonColor"))); }
         else {
+
             OutfoxResources.logWarn("A fox didn't have a saved ribbon color for some reason, defaulting to blue");
             this.setRibbonColor(EnumDyeColor.BLUE);
         }
 
         if (compound.hasKey("SearchedBlock")) {
+
             this.searchedBlock = Block.REGISTRY.getObject(new ResourceLocation(compound.getString("SearchedBlock")));
 
             if (compound.hasKey("SearchedBlockTags")) { this.stateTags = OutfoxResources.stateStringToHashMap(compound.getString("SearchedBlockTags"), compound.getString("SearchedBlock")); }
         }
+
+        if (compound.hasKey("StolenItem")) { this.setStolenItem(new ItemStack(compound.getCompoundTag("StolenItem"))); }
+        else { this.setStolenItem(ItemStack.EMPTY); }
 
         if (this.aiSit != null) { this.aiSit.setSitting(compound.getBoolean("Sitting")); }
     }
@@ -191,6 +203,8 @@ public class EntityFox extends EntityTameable {
     public void onUpdate() {
 
         super.onUpdate();
+
+        if (this.stealCooldown > 0) { --this.stealCooldown; }
 
         if (this.isWet()) {
 
@@ -248,6 +262,12 @@ public class EntityFox extends EntityTameable {
         }
     }
 
+    public void onDeath(DamageSource cause) {
+
+        super.onDeath(cause);
+        if (!this.world.isRemote) { this.dropStolenItem(); }
+    }
+
     public boolean processInteract(EntityPlayer player, EnumHand hand) {
 
         if (this.interacted) { return false; } // the off-hand should only try to interact if the main hand did not
@@ -258,7 +278,7 @@ public class EntityFox extends EntityTameable {
 
         if (this.isTamed() && this.isOwner(player)) {
 
-            if (super.processInteract(player, hand)) { return true; } // breed
+            if (!(isFoxFood && (this.getHealth() < 15.0F)) && super.processInteract(player, hand)) { return true; } // breed
 
             if (!item.isEmpty()) {
 
@@ -280,31 +300,13 @@ public class EntityFox extends EntityTameable {
                         return true;
                     }
                 }
-                else if (OutfoxConfig.search.search_enabled && item.getItem() instanceof ItemBlock) {
-
-                    Block b = ((ItemBlock)item.getItem()).getBlock();
-                    if (this.aiSearch != null) { this.aiSearch.reset(); }
-                    if (OutfoxResources.checkBlockIdIsBlacklisted(b.getRegistryName().toString())) { // set block
-
-                        this.searchedBlock = b;
-                        this.setBlockTags(b, item.getMetadata());
-                        Outfox.proxy.doParticlesSimple("block_set", this);
-                        return true;
-                    }
-                    else { // block is disallowed
-
-                        this.searchedBlock = null;
-                        this.stateTags = new HashMap<String, String>();
-                        Outfox.proxy.doParticlesSimple("block_notallowed", this);
-                        return true;
-                    }
-                }
+                else if (this.setSearchedBlock(item)) { return true; } // search
             }
             else {
 
                 if (OutfoxConfig.search.search_enabled
                 && player.isSneaking()
-                && this.searchedBlock != null) { // clear block
+                && this.searchedBlock != null) { // clear search
 
                     if (this.aiSearch != null) { this.aiSearch.reset(); }
                     this.searchedBlock = null;
@@ -313,11 +315,11 @@ public class EntityFox extends EntityTameable {
                 }
             }
 
-            if (!this.world.isRemote && hand.equals(EnumHand.OFF_HAND)) { // sit or stand
+            if (!this.world.isRemote && hand.equals(EnumHand.OFF_HAND) && !this.dropStolenItem()) { //drop item, or sit/stand if no item
 
                 this.aiSit.setSitting(!this.isSitting());
                 this.isJumping = false;
-                this.getNavigator().clearPath(); // TODO: this isn't working for some reason?
+                this.getNavigator().clearPath(); // TODO: why isn't this working
                 return true;
             }
         }
@@ -360,6 +362,11 @@ public class EntityFox extends EntityTameable {
         if (this.aiAvoid == null) { this.aiAvoid = new EntityAIAvoidEntity<EntityPlayer>(this, EntityPlayer.class, 12.0F, 0.7D, 1.2D); }
         this.tasks.removeTask(this.aiAvoid);
         if (!this.isTamed()) { this.tasks.addTask(4, this.aiAvoid); }
+    }
+
+    public ItemStack getActiveItemStack() {
+
+        return this.dataManager.get(STOLEN_ITEM);
     }
 
     public boolean isBreedingItem(ItemStack item) {
@@ -415,6 +422,21 @@ public class EntityFox extends EntityTameable {
        return super.canBePushed();
     }
 
+    public int getVariant() {
+
+        return MathHelper.clamp(this.dataManager.get(VARIANT).intValue(), 0, 5);
+    }
+
+    public EnumDyeColor getRibbonColor() {
+
+        return EnumDyeColor.byDyeDamage(this.dataManager.get(RIBBON_COLOR).intValue() & 15);
+    }
+
+    public void setRibbonColor(EnumDyeColor ribboncolor) {
+
+        this.dataManager.set(RIBBON_COLOR, ribboncolor.getDyeDamage());
+    }
+
     @Nullable
     public Block getSearchedBlock() {
 
@@ -424,12 +446,45 @@ public class EntityFox extends EntityTameable {
     @Nullable
     public int[] getTargetBlock() {
 
-        return this.aiSearch.getTargetBlock();
+        if (this.aiSearch != null) { return this.aiSearch.getTargetBlock(); }
+
+        return null;
+    }
+
+    public boolean hasStolenItem() {
+
+        return this.dataManager.get(STOLEN_ITEM) != ItemStack.EMPTY;
+    }
+
+    public boolean setStolenItem(ItemStack item) {
+
+        this.dataManager.set(STOLEN_ITEM, item);
+        return this.dataManager.get(STOLEN_ITEM) != ItemStack.EMPTY;
+    }
+
+    public boolean dropStolenItem() {
+
+        ItemStack item = this.dataManager.get(STOLEN_ITEM);
+        if (!item.isEmpty()) {
+
+            this.entityDropItem(item, 0.5f);
+            this.dataManager.set(STOLEN_ITEM, ItemStack.EMPTY);
+            return true;
+        }
+
+        return false;
     }
 
     protected boolean canTriggerWalking() {
 
-        return !this.aiSearch.isRunning();
+        if (this.aiSearch != null) { return !this.aiSearch.isRunning() && super.canTriggerWalking(); }
+
+        return super.canTriggerWalking();
+    }
+
+    protected void playStealSound() {
+
+        this.playSound(OutfoxResources.FOX_STEAL_SND, this.getSoundVolume(), 1.0f);
     }
 
     protected void playStepSound(BlockPos pos, Block blockIn) {
@@ -457,24 +512,45 @@ public class EntityFox extends EntityTameable {
         return OutfoxResources.FOX_DEATH_SND;
     }
 
-    protected int getVariant() {
-
-        return MathHelper.clamp(this.dataManager.get(VARIANT).intValue(), 0, 5);
-    }
-
     protected void setVariant(int variant) {
 
         this.dataManager.set(VARIANT, variant);
     }
 
-    protected EnumDyeColor getRibbonColor() {
+    protected boolean setSearchedBlock(ItemStack item) {
 
-        return EnumDyeColor.byDyeDamage(this.dataManager.get(RIBBON_COLOR).intValue() & 15);
-    }
+        if (!OutfoxConfig.search.search_enabled) { return false; }
 
-    protected void setRibbonColor(EnumDyeColor ribboncolor) {
+        Block b = null;
+        String tags = "";
+        String[] alias = OutfoxResources.getAliasedItem(item);
 
-        this.dataManager.set(RIBBON_COLOR, ribboncolor.getDyeDamage());
+        if (alias != null) {
+            b = Block.getBlockFromName(alias[0]);
+            tags = alias[1];
+        } else if (item.getItem() instanceof ItemBlock) { b = ((ItemBlock)item.getItem()).getBlock(); }
+
+        if (b != null) {
+
+            if (this.aiSearch != null) { this.aiSearch.reset(); }
+            if (OutfoxResources.checkBlockIdIsBlacklisted(b.getRegistryName().toString())) { // set block
+
+                this.searchedBlock = b;
+                if (tags == "") { this.setBlockTags(b, item.getMetadata()); }
+                else { this.stateTags = OutfoxResources.stateStringToHashMap(tags, alias[0] + " (from aliased items list, check config!)"); }
+                Outfox.proxy.doParticlesSimple("block_set", this);
+                return true;
+            }
+            else { // block is disallowed
+
+                this.searchedBlock = null;
+                this.stateTags = new HashMap<String, String>();
+                Outfox.proxy.doParticlesSimple("block_notallowed", this);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected void setBlockTags(Block block, int meta) {
@@ -506,7 +582,7 @@ public class EntityFox extends EntityTameable {
     @SideOnly(Side.CLIENT)
     protected ItemStack getStolenItem() {
 
-        return this.stolenItem;
+        return this.dataManager.get(STOLEN_ITEM);
     }
 
     @SideOnly(Side.CLIENT)
@@ -547,7 +623,7 @@ public class EntityFox extends EntityTameable {
 
         public boolean shouldExecute() {
 
-            //if (!OutfoxConfig.stealing.sit_override) { return super.shouldExecute(); }
+            if (!OutfoxConfig.stealing.sit_override) { return super.shouldExecute(); }
 
             return this.fox.getOwner() != null
             && this.fox.getOwner().getRevengeTarget() == null
@@ -588,7 +664,7 @@ public class EntityFox extends EntityTameable {
      */
     static class PathFinderTweakable<T extends NodeProcessor> extends PathFinder {
 
-        private final PathPoint[] pathOptions = new PathPoint[OutfoxConfig.search.search_waypoints]; // the entire bottom 25% of this file exists purely for the sake of this one line! ¯\(o_°)/¯
+        private final PathPoint[] pathOptions = new PathPoint[OutfoxConfig.search.search_waypoints]; // the entire bottom 15% of this file exists purely for the sake of this one line! ¯\(o_°)/¯
         private final PathHeap path = new PathHeap();
         private final Set<PathPoint> closedSet = Sets.<PathPoint>newHashSet();
         private final NodeProcessor nodeProcessor;

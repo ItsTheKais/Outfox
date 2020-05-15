@@ -39,14 +39,12 @@ public class EntityAISearchForBlock extends EntityAIBase {
     private int[] target; // x-y-z coordinates of found block
 
     /**
-     * searches around the fox for the block specified at [this.fox.searchedBlock];
-     * tries to path as close as possible to the nearest block of that type to the fox;
-     * will not fire if the fox is wild, sitting, does not have a block set, or is far away from its owner;
-     * searches occur every [this.frequency] ticks;
-     * begins when a block is found less than [this.range] blocks away;
-     * sets a new path each time a search finds a block;
-     * uses [this.fox.searchNavigator] as its PathNavigator;
-     * stops if [this.fox.searchedBlock] is not found within [this.range] again in eight searches
+     * Searches around the fox for the block specified at the fox's [searchedBlock];
+     * Tries to path as close as possible, at the input speed, to the nearest block of that type to the fox;
+     * Will not fire if the fox is wild, sitting, does not have a block set, or is far away from its owner;
+     * Searches occur at the tick interval and within the range specified in mod config;
+     * Sets paths at regular intervals using the fox's [searchNavigator];
+     * Stops if the fox's searched block is cleared or no more matching blocks are found again within eight searches
      */
     public EntityAISearchForBlock(EntityFox foxIn, double speedIn) {
 
@@ -63,6 +61,7 @@ public class EntityAISearchForBlock extends EntityAIBase {
         return OutfoxConfig.search.search_enabled
             && this.fox.isTamed()
             && this.fox.getOwner() != null
+            && !this.fox.isChild()
             && !this.fox.isSitting()
             && this.fox.searchedBlock != null
             && this.fox.getDistanceSq(this.fox.getOwner()) <= 160.0D
@@ -156,7 +155,7 @@ public class EntityAISearchForBlock extends EntityAIBase {
 
     private boolean doBlockSearch() {
 
-        if (this.odds > 0 && this.fox.getRNG().nextInt(99) < this.odds) { return false; }
+        if (this.odds > 0 && this.fox.getRNG().nextInt(100) < this.odds) { return false; }
 
         double d = Double.MAX_VALUE;
         BlockPos p = this.fox.getPosition();

@@ -23,7 +23,7 @@ public class LayerFoxRibbon implements LayerRenderer<EntityFox> {
 
     public LayerFoxRibbon(RenderFox foxRendererIn) {
 
-        foxRenderer = foxRendererIn;
+        this.foxRenderer = foxRendererIn;
     }
 
     public void doRenderLayer(EntityFox fox, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {

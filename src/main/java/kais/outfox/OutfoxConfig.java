@@ -42,9 +42,9 @@ public class OutfoxConfig {
     @Config.LangKey("outfox.config.category_search")
     public static final Search search = new Search();
 
-    //@Config.Comment("Item stealing AI configuration")
-    //@Config.LangKey("outfox.config.category_stealing")
-    //public static final Stealing stealing = new Stealing();
+    @Config.Comment("Item stealing AI configuration")
+    @Config.LangKey("outfox.config.category_stealing")
+    public static final Stealing stealing = new Stealing();
 
     public static class Biomes {
 
@@ -102,8 +102,8 @@ public class OutfoxConfig {
 
         @Config.Comment({
             "Is The One Probe compatibility enabled?",
-            "If The One Probe is present, this adds the currently-searched-for block to the standard tooltip, and",
-            "the XYZ coordinates of the located block to the Creative Probe tooltip.",
+            "If The One Probe is present, this adds the currently-searched-for block and stolen item to the",
+            "standard tooltip, and the XYZ coordinates of the located block to the Creative Probe tooltip.",
             "This setting requires a Minecraft restart if changed from the in-game config menu!"
         })
         @Config.LangKey("outfox.config.compat_theoneprobe")
@@ -112,7 +112,8 @@ public class OutfoxConfig {
 
         @Config.Comment({
             "Is WAILA/HWYLA compatibility enabled?",
-            "If WAILA or HWYLA are present, this adds the currently-searched-for block to the tooltip.",
+            "If WAILA or HWYLA are present, this adds the currently-searched-for block and stolen item to the",
+            "tooltip.",
             "This setting requires a Minecraft restart if changed from the in-game config menu!"
         })
         @Config.LangKey("outfox.config.compat_waila")
@@ -168,6 +169,26 @@ public class OutfoxConfig {
         @Config.RangeInt(min = 0)
         public int obstruction_depth = 5;
 
+        @Config.Comment({
+            "A list of item-to-block aliases. Right-clicking the fox with the specified item ID will tell it to",
+            "search for the specified block state. Each entry must be formatted like the following example:",
+            "    item/block[state1=value1,state2=value2...]",
+            "... where 'item' is the aliased item ID (e.g. minecraft:wooden_axe), 'block' is the target block ID",
+            "(e.g. minecraft:log) and the following brackets contain a list of target block state properties",
+            "separated by commas (e.g. [variant=oak,axis=y]). The brackets must be present but may be empty.",
+            "To specify a metadata value for the input item, follow the item ID with another : and then a number",
+            "(e.g. minecraft:dye:3). If not specified, metadata will be ignored entirely.",
+            "Only block state properties listed in 'state_matches' will be considered. Any other properties in an",
+            "entry will be silently ignored.",
+            "An entire entry will be silently ignored if the input item is one that produces some other effect",
+            "when used on an entity (e.g. leash, name tag) or if the item is aliased to a block that is not",
+            "allowed to be searched for given the current state of 'search_list' and 'search_listmode'.",
+            "A block may be used as the input item, but keep in mind that this will prevent that block from being",
+            "searched for the normal way!"
+        })
+        @Config.LangKey("outfox.config.search_aliases")
+        public String[] search_aliases = OutfoxResources.DEFAULT_ITEM_ALIASES;
+
         @Config.Comment("Is block searching enabled?")
         @Config.LangKey("outfox.config.search_enabled")
         public boolean search_enabled = true;
@@ -186,7 +207,7 @@ public class OutfoxConfig {
             "search for.",
             "Default: (empty)"})
         @Config.LangKey("outfox.config.search_list")
-        public String[] search_list = { };
+        public String[] search_list = OutfoxResources.DEFAULT_SEARCH_BLACKLIST;
 
         @Config.Comment({"Whether 'search_list' should be used as a whitelist instead. If true, foxes will",
             "only be allowed to search for blocks specified on that list."})
@@ -240,10 +261,10 @@ public class OutfoxConfig {
             "problem where foxes track multiple unrelated blocks when searching for one, you can fix it by adding",
             "the relevant block state property (hint: F3) to this list... and also submit a bug report so it can",
             "be added to the defaults for future releases!",
-            "Note: be careful of adding tags like 'facing' or 'orientation' as these will cause idiocy such as",
-            "foxes only being able to track blocks that use those tags if you click the block on the fox while",
-            "facing a certain direction. Which might make for a neat puzzle in a challenge map, but would get",
-            "quite annoying in regular survival!",
+            "Note: be careful of adding tags like 'axis' or 'orientation' as these will cause idiocy such as foxes",
+            "only being able to track blocks that use those tags if you click the block on the fox while facing a",
+            "certain direction. Which might make for a neat puzzle in a challenge map, but would get quite",
+            "annoying in regular survival!",
             "Default:",
             "  color",
             "  colour",
@@ -268,7 +289,16 @@ public class OutfoxConfig {
         @Config.LangKey("outfox.config.sit_override")
         public boolean sit_override = true;
 
-        @Config.Comment("Should foxes be able to steal armor as well as held items?s")
+        @Config.Comment({
+            "The probability of a steal causing the target to aggro on the fox. Depending on the circumstances",
+            "of the fight, the target may not switch aggro when stolen from even if this is set to 100%.",
+            "Default: 25"
+        })
+        @Config.LangKey("outfox.config.stealing_aggrochance")
+        @Config.RangeInt(min = 0, max = 100)
+        public int stealing_aggrochance = 25;
+
+        @Config.Comment("Should foxes be able to steal armor as well as held items?")
         @Config.LangKey("outfox.config.stealing_armor")
         public boolean stealing_armor = false;
 
@@ -276,7 +306,64 @@ public class OutfoxConfig {
         @Config.LangKey("outfox.config.stealing_enabled")
         public boolean stealing_enabled = true;
 
-        @Config.Comment("Should foxes be able to steal from players?")
+        @Config.Comment({
+            "A list of entity IDs (e.g. minecraft:zombie) that foxes will not be allowed to steal items from.",
+            "Default:",
+            "  minecraft:witch"
+        })
+        @Config.LangKey("outfox.config.stealing_entities")
+        public String[] stealing_entities = OutfoxResources.DEFAULT_UNSTEALABLE_ENTITIES;
+
+        @Config.Comment({
+            "Whether 'stealing_entities' should be used as a whitelist instead. If true, foxes",
+            "will only be allowed to steal from entities specified on that list."
+        })
+        @Config.LangKey("outfox.config.stealing_entitymode")
+        public boolean stealing_entitymode = false;
+
+        @Config.Comment({
+            "A list of item IDs (e.g. minecraft:iron_sword) that foxes will not be allowed to steal.",
+            "Default:",
+            "  minecraft:skull"
+        })
+        @Config.LangKey("outfox.config.stealing_items")
+        public String[] stealing_items = OutfoxResources.DEFAULT_UNSTEALABLE_ITEMS;
+
+        @Config.Comment({
+            "Whether 'stealing_items' should be used as a whitelist instead. If true, foxes",
+            "will only be allowed to steal items specified on that list."
+        })
+        @Config.LangKey("outfox.config.stealing_itemsmode")
+        public boolean stealing_itemsmode = false;
+
+        @Config.Comment({
+            "Upon being stolen, an item will lose a maximum of this percent of its durability.",
+            "Set to 0 to disable this feature. All stolen items will be at max durability if this is done.",
+            "Default: 85"
+        })
+        @Config.LangKey("outfox.config.stealing_maxdamage")
+        @Config.RangeInt(min = 0, max = 99)
+        public int stealing_maxdamage = 85;
+
+        @Config.Comment({
+            "Upon being stolen, an item will lose a minimum of this percent of its durability.",
+            "If this is set to a greater number than 'stealing_maxdamage', it will be treated as",
+            "though it were the same number.",
+            "Default: 25"
+        })
+        @Config.LangKey("outfox.config.stealing_mindamage")
+        @Config.RangeInt(min = 0, max = 99)
+        public int stealing_mindamage = 25;
+
+        @Config.Comment({
+            "A fox will not attempt to steal if it has less than this much health remaining.",
+            "Default: 8"
+        })
+        @Config.LangKey("outfox.config.stealing_minhealth")
+        @Config.RangeInt(min = 1, max = 15)
+        public int stealing_minhealth = 8;
+
+        @Config.Comment({"Should foxes be able to steal from players?"})
         @Config.LangKey("outfox.config.stealing_players")
         public boolean stealing_players = false;
     }

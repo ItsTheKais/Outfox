@@ -25,6 +25,7 @@ public class RenderFox extends RenderLiving<EntityFox> {
 
         super(manager, new ModelFox(), 0.5F);
         this.addLayer(new LayerFoxRibbon(this));
+        this.addLayer(new LayerFoxItem(this));
     }
 
     public void doRender(EntityFox fox, double x, double y, double z, float entityYaw, float partialTicks) {
@@ -40,7 +41,7 @@ public class RenderFox extends RenderLiving<EntityFox> {
     protected ResourceLocation getEntityTexture(EntityFox fox) {
 
         if (fox.hasCustomName() && fox.getCustomNameTag().equals("Kais")) {
-            return OutfoxTextures.FOX_RAINBOW_TEX;
+            return OutfoxTextures.FOX_STRANGE_TEX;
         } else {
             return OutfoxTextures.FOX_TEX_SET[fox.getVariant()];
         }

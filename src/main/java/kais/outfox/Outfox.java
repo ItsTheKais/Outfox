@@ -33,7 +33,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
     name = OutfoxResources.NAME,
     version = OutfoxResources.VERSION,
     dependencies = "required-after:forge@[14.23.3.2678,);"
-        + "after:theoneprobe@[1.4.28,)",
+        + "after:theoneprobe@[1.4.28,);"
+        + "after:waila@[1.8.26,)",
     acceptedMinecraftVersions = "[1.12.2,]"
 )
 

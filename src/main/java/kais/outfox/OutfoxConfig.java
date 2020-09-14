@@ -1,5 +1,5 @@
 /**
- * Copyright © 2018 Aiden Vaughn "ItsTheKais"
+ * Copyright ï¿½ 2018 Aiden Vaughn "ItsTheKais"
  *
  * This file is part of Outfox.
  *
@@ -153,6 +153,14 @@ public class OutfoxConfig {
         @Config.LangKey("outfox.config.tame_chance")
         @Config.RangeInt(min=1)
         public int tame_chance = 4;
+
+        @Config.Comment({
+                "List of foods that can be used to tame and breed foxes.",
+                "This setting requires a Minecraft restart if changed from the in-game config menu!",
+                "Default: minecraft:rabbit, minecraft:cooked_rabbit"
+        })
+        @Config.LangKey("outfox.config.foods")
+        public String[] foods = {"minecraft:rabbit", "minecraft:cooked_rabbit"};
     }
 
     public static class Search {

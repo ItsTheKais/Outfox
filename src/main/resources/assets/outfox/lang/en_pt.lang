@@ -77,7 +77,9 @@ outfox.config.state_matches=Types o' treasure
 outfox.config.state_matches.tooltip=What marks o' mintin' must the mangy mutts watch fer when checkin' found coins?
 outfox.config.tame_chance=Odds o' taming
 outfox.config.tame_chance.tooltip=How like shall the mutts be to sign a pact wit' ye?
-
+#i tried
+outfox.config.foods=Critter Grubs
+outfox.config.foods.tooltip=What mutts shall yer comrades like a feast on?
 
 # entity name
 

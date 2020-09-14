@@ -1,5 +1,5 @@
 /**
- * Copyright � 2018 Aiden Vaughn "ItsTheKais"
+ * Copyright © 2018 Aiden Vaughn "ItsTheKais"
  *
  * This file is part of Outfox.
  *
@@ -663,7 +663,7 @@ public class EntityFox extends EntityTameable {
      */
     static class PathFinderTweakable<T extends NodeProcessor> extends PathFinder {
 
-        private final PathPoint[] pathOptions = new PathPoint[OutfoxConfig.search.search_waypoints]; // the entire bottom 15% of this file exists purely for the sake of this one line! �\(o_�)/�
+        private final PathPoint[] pathOptions = new PathPoint[OutfoxConfig.search.search_waypoints]; // the entire bottom 15% of this file exists purely for the sake of this one line! ¯\(o_°)/¯
         private final PathHeap path = new PathHeap();
         private final Set<PathPoint> closedSet = Sets.<PathPoint>newHashSet();
         private final NodeProcessor nodeProcessor;

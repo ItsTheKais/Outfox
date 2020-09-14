@@ -1,5 +1,5 @@
 /**
- * Copyright � 2018 Aiden Vaughn "ItsTheKais"
+ * Copyright © 2018 Aiden Vaughn "ItsTheKais"
  *
  * This file is part of Outfox.
  *

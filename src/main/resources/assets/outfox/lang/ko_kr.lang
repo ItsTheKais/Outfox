@@ -1,0 +1,100 @@
+# note to any translators:
+# if you skip translating a line, don't copy the english line into your file
+# omitted lines will be automatically inherited from this file
+# so if you copy an english line, it will become outdated/inaccurate when this file changes
+
+# also: THANK YOU you are awesome
+
+
+# config screen comments & tooltips
+
+outfox.config.category_biomes=바이옴
+outfox.config.category_biomes.tooltip=여우가 스폰할 수 있는 바이옴 관련 설정
+outfox.config.category_compat=호환
+outfox.config.category_compat.tooltip=다른 모드간 호환 관련 설정
+outfox.config.category_general=기타
+outfox.config.category_general.tooltip=기타 설정
+outfox.config.category_search=블록 추적
+outfox.config.category_search.tooltip=여우의 블록 추적 AI 관련 설정
+outfox.config.category_stealing=아이템 약탈
+outfox.config.category_stealing.tooltip=여우의 아이템 약탈 AI 관련 설정
+outfox.config.common_biomes=여우가 흔한 바이옴
+outfox.config.common_biomes.tooltip=여우가 흔히 스폰되는 바이옴 목록.
+outfox.config.common_types=여우가 흔한 바이옴 유형
+outfox.config.common_types.tooltip=여우가 흔히 스폰되는 바이옴 유형(BiomeDictionary) 목록.
+outfox.config.compat_theoneprobe=The One Probe 호환
+outfox.config.compat_theoneprobe.tooltip=여우를 볼때 추가 정보가 The One Probe에 표시됩니다.
+outfox.config.compat_waila=WAILA 또는 HWYLA 호환
+outfox.config.compat_waila.tooltip=여우를 볼때 추가 정보가 WAILA 또는 HWYLA에 표시됩니다.
+outfox.config.immune_tools=안 때려지는 "무기" 목록
+outfox.config.immune_tools.tooltip=들고 있을 때 여우를 때릴 수 없는 아이템의 목록
+outfox.config.logging_enabled=로그 생성
+outfox.config.logging_enabled.tooltip=이 모드의 에러/경고를 로그에 출력할까요?
+outfox.config.obstruction_depth=방해물 감지 두께
+outfox.config.obstruction_depth.tooltip=몇 블럭 밖까지 AI가 캘 수 없는 블럭을 감지해야 할까요?
+outfox.config.particles_enabled=도우미 입자
+outfox.config.particles_enabled.tooltip=블록 추적 과정을 보여주는 입자를 보여줄까요?
+outfox.config.rare_biomes=여우가 귀한 바이옴
+outfox.config.rare_biomes.tooltip=여우가 가끔 스폰되는 바이옴 목록.
+outfox.config.rare_types=여우가 귀한 바이옴 유형
+outfox.config.rare_types.tooltip=여우가 가끔 스폰되는 바이옴 유형(BiomeDictionary) 목록.
+outfox.config.search_aliases=어떤 블록이 어떤 아이템을 드롭하나요?
+outfox.config.search_aliases.tooltip=어떤 블록이 어떤 아이템을 드롭하는지에 관한 목록. 자세한 문법과 주의할 점은 컨픽파일을 확인하세요!
+outfox.config.search_enabled=블록 추적 활성화
+outfox.config.search_enabled.tooltip=여우의 블록 추적 기능을 활성화할까요?
+outfox.config.search_frequency=추적 쿨다운
+outfox.config.search_frequency.tooltip=두 블록 추적 시도 사이 쿨다운 (틱으로)
+outfox.config.search_list=블록 블랙리스트
+outfox.config.search_list.tooltip=여우가 추적할 수 없는 블록들의 목록
+outfox.config.search_listmode=블록 블랙리스트를 화이트리스트로 사용
+outfox.config.search_listmode.tooltip=이 항목이 true면 여우가 추적할 수 있는 블록들의 목록이 됩니다.
+outfox.config.search_odds=추적 실패 확률
+outfox.config.search_odds.tooltip=블록이 주변에 있는데도 불구하고 여우가 블록을 찾지 못하는 확률을 정합니다.
+outfox.config.search_range=추적 거리
+outfox.config.search_range.tooltip=여우가 얼마나 멀리까지 추적이 가능합니까? (블록으로)
+outfox.config.search_waypoints=패스파인더 AI 중간지점
+outfox.config.search_waypoints.tooltip=패스파인딩 AI 중간지점의 숫자.\n저장하고 나가야 적용됩니다!
+outfox.config.sit_override=앉아있는 여우
+outfox.config.sit_override.tooltip=앉아있는 여우가 공격당하는 주인을 무시해야 할까요?
+outfox.config.stealing_aggrochance=어그로 확률
+outfox.config.stealing_aggrochance.tooltip=여우의 약탈이 몬스터의 관심을 여우로 돌릴 확률.
+outfox.config.stealing_armor=방어구 훔치기
+outfox.config.stealing_armor.tooltip=여우가 방어구도 약탈할 수 있게 할까요?
+outfox.config.stealing_enabled=약탈 활성화
+outfox.config.stealing_enabled.tooltip=여우의 약탈 기능을 활성화할까요?
+outfox.config.stealing_entities=엔티티(몹) 블랙리스트
+outfox.config.stealing_entities.tooltip=여우가 약탈할 수 없는 엔티티들의 목록
+outfox.config.stealing_entitymode=엔티티(몹) 블랙리스트를 화이트리스트로 사용
+outfox.config.stealing_entitymode.tooltip=이 항목이 true면 여우가 약탈할 수 있는 엔티티들의 목록이 됩니다.
+outfox.config.stealing_items=아이템 블랙리스트
+outfox.config.stealing_items.tooltip=여우가 약탈할 수 없는 아이템들의 목록
+outfox.config.stealing_itemsmode=아이템 블랙리스트를 화이트리스트로 사용
+outfox.config.stealing_itemsmode.tooltip=이 항목이 true면 여우가 약탈할 수 있는 아이템들의 목록이 됩니다.
+outfox.config.stealing_maxdamage=최대 파손률
+outfox.config.stealing_maxdamage.tooltip=약탈한 아이템의 최대 내구도 감소율. 0으로 설정하면 감소되지 않습니다.
+outfox.config.stealing_mindamage=최소 파손률
+outfox.config.stealing_mindamage.tooltip=약탈한 아이템의 최소 내구도 감소율.
+outfox.config.stealing_minhealth=약탈 최소 체력
+outfox.config.stealing_minhealth.tooltip=여우의 체력이 이 이하면 약탈을 할 수 없습니다.
+outfox.config.stealing_players=플레이어 약탈
+outfox.config.stealing_players.tooltip=여우가 플레이어로부터 약탈할 수 있습니까?
+outfox.config.state_matches=Blockstate 태그
+outfox.config.state_matches.tooltip=추적이 성공하려면 이 blockstate를 맞춰야 합니다.
+outfox.config.tame_chance=길들이기 확률
+outfox.config.tame_chance.tooltip=음식 1개당 1/n확률로 여우를 길들일 수 있습니다.
+outfox.config.foods=여우 음식
+outfox.config.foods.tooltip=여우들을 길들이고 번식시키는 음식들의 목록.
+
+
+# entity name
+
+entity.outfox.fox.name=여우
+
+
+# subtitles
+
+outfox.subtitles.fox.idle=여우가 지저귀는 소리
+outfox.subtitles.fox.sniff=여우가 킁킁대는 소리
+outfox.subtitles.fox.steal=여우가 훔치는 소리
+outfox.subtitles.fox.hurt=여우가 다치는 소리
+outfox.subtitles.fox.death=여우가 죽는 소리

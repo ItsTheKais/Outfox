@@ -81,7 +81,9 @@ outfox.config.stealing_players.tooltip=Should foxes be able to steal from player
 outfox.config.state_matches=Block state tags
 outfox.config.state_matches.tooltip=The block state properties that a search must match to succeed.
 outfox.config.tame_chance=Taming odds
-outfox.config.tame_chance.tooltip=Each raw rabbit has a one-in-this chance of taming a fox.
+outfox.config.tame_chance.tooltip=Each foods have a one-in-this chance of taming a fox.
+outfox.config.foods=Fox Foods
+outfox.config.foods.tooltip=List of foods that can be used to tame and breed foxes.
 
 
 # entity name

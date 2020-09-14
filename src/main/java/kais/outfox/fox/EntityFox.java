@@ -1,5 +1,5 @@
 /**
- * Copyright © 2018 Aiden Vaughn "ItsTheKais"
+ * Copyright Â© 2018 Aiden Vaughn "ItsTheKais"
  *
  * This file is part of Outfox.
  *
@@ -38,10 +38,7 @@ import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemFood;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.pathfinding.NodeProcessor;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathFinder;
@@ -370,8 +367,10 @@ public class EntityFox extends EntityTameable {
     }
 
     public boolean isBreedingItem(ItemStack item) {
-
-        return (item.getItem().equals(Items.RABBIT) || item.getItem().equals(Items.COOKED_RABBIT));
+        for (String key : OutfoxConfig.general.foods) {
+            if (item.getItem() == Item.getByNameOrId(key)) return true;
+        }
+        return false;
     }
 
     public boolean canMateWith(EntityAnimal otheranimal) {
@@ -664,7 +663,7 @@ public class EntityFox extends EntityTameable {
      */
     static class PathFinderTweakable<T extends NodeProcessor> extends PathFinder {
 
-        private final PathPoint[] pathOptions = new PathPoint[OutfoxConfig.search.search_waypoints]; // the entire bottom 15% of this file exists purely for the sake of this one line! ¯\(o_°)/¯
+        private final PathPoint[] pathOptions = new PathPoint[OutfoxConfig.search.search_waypoints]; // the entire bottom 15% of this file exists purely for the sake of this one line! Â¯\(o_Â°)/Â¯
         private final PathHeap path = new PathHeap();
         private final Set<PathPoint> closedSet = Sets.<PathPoint>newHashSet();
         private final NodeProcessor nodeProcessor;
